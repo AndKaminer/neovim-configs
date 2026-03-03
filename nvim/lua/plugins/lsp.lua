@@ -33,7 +33,6 @@ return {
       capabilities = capabilities,
       on_attach = lsp_keymaps,
       cmd = {"clangd", "--compile-commands-dir=build"},
-      root_dir = require("lspconfig.util").root_pattern(".git"),
       filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
     })
 
