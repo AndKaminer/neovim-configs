@@ -1,20 +1,23 @@
 return {
-	"nvim-treesitter/nvim-treesitter",
+  "nvim-treesitter/nvim-treesitter",
+  branch = "main",
+  lazy = false,
   build = ":TSUpdate",
   config = function()
-    local configs = require("nvim-treesitter.configs")
+    require("nvim-treesitter").setup()
 
-    configs.setup({
-      ensure_installed = {"c", "cpp", "python", "lua", "javascript"},
-      sync_install = false,
-      highlight = {
-        enable = true,
-
-        -- we can specify a disable function as well
-
-        additional_vim_regex_highlighting = false,
-      },
-      indent = { enable = true },
+    -- replaces ensure_installed
+    require("nvim-treesitter").install({
+      "c", "cpp", "python", "lua", "javascript",
     })
-  end
+
+    -- replaces highlight + indent (enabled per-filetype now)
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = { "c", "cpp", "python", "lua", "javascript" },
+      callback = function()
+        pcall(vim.treesitter.start)  -- highlighting; also turns off regex syntax
+        vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+      end,
+    })
+  end,
 }
